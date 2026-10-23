@@ -37,7 +37,8 @@ export default function CvPage() {
           <span className="text-ash">Ludhiana, Punjab</span>
           <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
           <a href={CONTACT.github.href}>{CONTACT.github.label}</a>
-          <a href={CONTACT.resume.href}>One-page résumé (PDF)</a>
+          <a href={CONTACT.linkedin.href}>LinkedIn</a>
+          {CONTACT.resume.href ? <a href={CONTACT.resume.href}>One-page résumé (PDF)</a> : null}
         </div>
       </header>
 

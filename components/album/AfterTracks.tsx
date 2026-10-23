@@ -218,9 +218,11 @@ function CopyEmail() {
 const ELSEWHERE = [
   { label: "GitHub", sub: CONTACT.github.label, href: CONTACT.github.href },
   ...(CONTACT.linkedin.href
-    ? [{ label: "LinkedIn", sub: "Profile", href: CONTACT.linkedin.href }]
+    ? [{ label: "LinkedIn", sub: "Nishtha Jain", href: CONTACT.linkedin.href }]
     : []),
-  { label: "Résumé", sub: "One page, PDF", href: CONTACT.resume.href },
+  ...(CONTACT.resume.href
+    ? [{ label: "Résumé", sub: "One page, PDF", href: CONTACT.resume.href }]
+    : []),
   { label: "Curriculum vitae", sub: "The long version", href: "/cv" },
 ];
 

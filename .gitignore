@@ -9,3 +9,7 @@ next-env.d.ts
 .vercel
 test-results/
 playwright-report/
+
+# Personal documents stay on this machine: CVs carry a phone number.
+source-documents/
+*.docx
