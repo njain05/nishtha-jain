@@ -4,7 +4,7 @@ import { RoundedBox } from "@react-three/drei";
 import { type ThreeEvent, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { anim, toggleDeck, trackArm } from "@/lib/vinyl/deck";
+import { anim, recordClick, trackArm } from "@/lib/vinyl/deck";
 import {
   BEARING_Y,
   BODY_H,
@@ -21,6 +21,25 @@ import {
   TOP,
 } from "@/lib/vinyl/geometry";
 import { makeGrooveMaps, makeLabel, makePlatterRim } from "@/lib/vinyl/textures";
+
+/** How high the record rises to turn over: its radius, plus room to clear the platter. */
+const LIFT_H = RECORD.r + 0.3;
+
+/**
+ * Side A's colour and Side B's for every surface that changes when the
+ * record is turned: walnut-dark and amber become pearl, pink felt and pink
+ * vinyl. Lerped each frame by anim.tint.
+ */
+const TINTS = {
+  satin: ["#1b1917", "#f6e9f0"],
+  felt: ["#151413", "#f29cc2"],
+  rubber: ["#0e0d0c", "#3a1630"],
+  dark: ["#232120", "#6a2f55"],
+  vinyl: ["#0b0b0c", "#ff4f9e"],
+  led: ["#ffb43a", "#ff4fa3"],
+} as const;
+const pair = (k: keyof typeof TINTS) =>
+  [new THREE.Color(TINTS[k][0]), new THREE.Color(TINTS[k][1])] as const;
 
 function useMaterials() {
   return useMemo(() => {
@@ -126,12 +145,10 @@ function Plinth({ m }: { m: ReturnType<typeof useMaterials> }) {
 }
 
 function Record({
-  m,
-  label,
+  labels,
   grooves,
 }: {
-  m: ReturnType<typeof useMaterials>;
-  label: THREE.Texture | null;
+  labels: { A: THREE.Texture | null; B: THREE.Texture | null };
   grooves: ReturnType<typeof makeGrooveMaps>;
 }) {
   const vinyl = useMemo(
@@ -153,37 +170,67 @@ function Record({
     () => new THREE.MeshStandardMaterial({ color: "#0b0b0c", roughness: 0.25 }),
     [],
   );
-  const paper = useMemo(
+  const paperA = useMemo(
     () => new THREE.MeshStandardMaterial({ color: "#efe5cf", roughness: 0.78 }),
+    [],
+  );
+  const paperB = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: "#ffc9e1", roughness: 0.78 }),
     [],
   );
 
   useEffect(() => {
-    paper.map = label;
-    paper.color.set(label ? "#ffffff" : "#efe5cf");
-    paper.needsUpdate = true;
-  }, [label, paper]);
+    for (const [paper, tex, plain] of [
+      [paperA, labels.A, "#efe5cf"],
+      [paperB, labels.B, "#ffc9e1"],
+    ] as const) {
+      paper.map = tex;
+      paper.color.set(tex ? "#ffffff" : plain);
+      paper.needsUpdate = true;
+    }
+  }, [labels, paperA, paperB]);
 
+  const vinylA = useMemo(() => pair("vinyl"), []);
+  useFrame(() => {
+    vinyl.color.copy(vinylA[0]).lerp(vinylA[1], anim.tint);
+    edge.color.copy(vinyl.color);
+    // Coloured vinyl is glossier than black: more clearcoat as it turns pink.
+    vinyl.clearcoat = 0.12 + anim.tint * 0.5;
+  });
+
+  const h = RECORD.h / 2;
   return (
-    <group position={[0, PLATTER.h + MAT_H, 0]}>
-      <mesh position={[0, RECORD.h / 2, 0]} material={edge} castShadow>
+    <>
+      <mesh material={edge} castShadow>
         <cylinderGeometry args={[RECORD.r, RECORD.r, RECORD.h, 160, 1, true]} />
       </mesh>
+      {/* Side A, face up */}
       <mesh
-        position={[0, RECORD.h + 0.0004, 0]}
+        position={[0, h + 0.0004, 0]}
         rotation-x={-Math.PI / 2}
         material={vinyl}
+        castShadow
         receiveShadow
       >
         <circleGeometry args={[RECORD.r, 256]} />
       </mesh>
-      <mesh position={[0, RECORD.h + 0.0012, 0]} rotation-x={-Math.PI / 2} material={paper}>
+      <mesh position={[0, h + 0.0012, 0]} rotation-x={-Math.PI / 2} material={paperA}>
         <circleGeometry args={[LABEL_R, 128]} />
       </mesh>
-      <mesh position={[0, RECORD.h + 0.05, 0]} material={m.chrome} castShadow>
-        <cylinderGeometry args={[0.028, 0.028, 0.1, 24]} />
+      {/* Side B, face down until the record is turned over */}
+      <mesh
+        position={[0, -h - 0.0004, 0]}
+        rotation-x={Math.PI / 2}
+        material={vinyl}
+        castShadow
+        receiveShadow
+      >
+        <circleGeometry args={[RECORD.r, 256]} />
       </mesh>
-    </group>
+      <mesh position={[0, -h - 0.0012, 0]} rotation-x={Math.PI / 2} material={paperB}>
+        <circleGeometry args={[LABEL_R, 128]} />
+      </mesh>
+    </>
   );
 }
 
@@ -291,24 +338,39 @@ export function Turntable() {
   const m = useMaterials();
   const grooves = useMemo(makeGrooveMaps, []);
   const rim = useMemo(makePlatterRim, []);
-  const [label, setLabel] = useState<THREE.Texture | null>(null);
+  const [labels, setLabels] = useState<{ A: THREE.Texture | null; B: THREE.Texture | null }>({
+    A: null,
+    B: null,
+  });
+  const tints = useMemo(
+    () => ({
+      satin: pair("satin"),
+      felt: pair("felt"),
+      rubber: pair("rubber"),
+      dark: pair("dark"),
+      led: pair("led"),
+    }),
+    [],
+  );
 
   const platter = useRef<THREE.Group>(null);
+  const lifter = useRef<THREE.Group>(null);
+  const spinner = useRef<THREE.Group>(null);
   const yawRef = useRef<THREE.Group>(null);
   const pitchRef = useRef<THREE.Group>(null);
 
-  // The label is drawn in the page's display face, read from the stylesheet.
+  // The labels are drawn in the page's display face, read from the stylesheet.
   useEffect(() => {
     let alive = true;
-    let made: THREE.Texture | null = null;
-    makeLabel().then((tex) => {
-      made = tex;
-      if (alive) setLabel(tex);
-      else tex.dispose();
+    const made: THREE.Texture[] = [];
+    Promise.all([makeLabel("A"), makeLabel("B")]).then(([A, B]) => {
+      made.push(A, B);
+      if (alive) setLabels({ A, B });
+      else for (const t of made) t.dispose();
     });
     return () => {
       alive = false;
-      made?.dispose();
+      for (const t of made) t.dispose();
     };
   }, []);
 
@@ -325,15 +387,31 @@ export function Turntable() {
   useFrame((_, dt) => {
     trackArm(performance.now());
     // Clockwise seen from above, which is negative about +y.
-    if (platter.current) platter.current.rotation.y -= anim.omega * Math.min(dt, 0.1);
+    const turn = anim.omega * Math.min(dt, 0.1);
+    if (platter.current) platter.current.rotation.y -= turn;
+    if (lifter.current) {
+      lifter.current.position.y = RECORD.h / 2 + anim.lift * LIFT_H;
+      lifter.current.rotation.x = anim.flip;
+    }
+    // Upside down, the record's own axis points at the floor; turning it the
+    // other way about that axis keeps it clockwise as seen from above.
+    if (spinner.current)
+      spinner.current.rotation.y -= turn * Math.sign(Math.cos(anim.flip) || 1);
     if (yawRef.current) yawRef.current.rotation.y = anim.yaw;
     if (pitchRef.current) pitchRef.current.rotation.x = anim.pitch;
+
+    const t = anim.tint;
+    m.satin.color.copy(tints.satin[0]).lerp(tints.satin[1], t);
+    m.felt.color.copy(tints.felt[0]).lerp(tints.felt[1], t);
+    m.rubber.color.copy(tints.rubber[0]).lerp(tints.rubber[1], t);
+    m.dark.color.copy(tints.dark[0]).lerp(tints.dark[1], t);
+    m.led.emissive.copy(tints.led[0]).lerp(tints.led[1], t);
     m.led.emissiveIntensity = anim.led * 2.4;
   });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
-    toggleDeck();
+    recordClick();
   };
 
   return (
@@ -362,7 +440,22 @@ export function Turntable() {
         >
           <circleGeometry args={[PLATTER.r, 128]} />
         </mesh>
-        <Record m={m} label={label} grooves={grooves} />
+        <mesh
+          position={[0, PLATTER.h + MAT_H + RECORD.h + 0.05, 0]}
+          material={m.chrome}
+          castShadow
+        >
+          <cylinderGeometry args={[0.028, 0.028, 0.1, 24]} />
+        </mesh>
+      </group>
+
+      {/* The record sits on the platter but is its own body: it lifts off and turns over. */}
+      <group position={[PLATTER.x, TOP + PLATTER.h + MAT_H, PLATTER.z]}>
+        <group ref={lifter}>
+          <group ref={spinner}>
+            <Record labels={labels} grooves={grooves} />
+          </group>
+        </group>
       </group>
 
       <Tonearm m={m} yawRef={yawRef} pitchRef={pitchRef} />

@@ -23,11 +23,29 @@ let musicBus: GainNode | null = null;
 let voices: Voice[] = [];
 let wobble: OscillatorNode | null = null;
 let chordTimer: number | null = null;
+let chordIndex = 0;
+/** Semitones away from D. Each track of the album sits in its own key. */
+let transpose = 0;
 
-const CHORDS = [
+/** Side A: two slow R&B chords, a long sway between them. */
+const SIDE_A = [
   [146.83, 185.0, 220.0, 277.18, 329.63], // Dmaj9: D3 F#3 A3 C#4 E4
   [123.47, 146.83, 185.0, 220.0, 277.18], // Bm9:  B2 D3 F#3 A3 C#4
 ];
+
+/**
+ * Side B: IV–V–iii–vi, the "royal road" progression a great deal of K-pop
+ * and J-pop is built on, in C and voiced to sit beside Side A's chords.
+ */
+const SIDE_B = [
+  [174.61, 220.0, 261.63, 329.63, 392.0], // Fmaj9: F3 A3 C4 E4 G4
+  [196.0, 246.94, 293.66, 349.23, 440.0], // G9:    G3 B3 D4 F4 A4
+  [164.81, 196.0, 246.94, 293.66, 392.0], // Em7:   E3 G3 B3 D4 G4
+  [220.0, 261.63, 329.63, 392.0, 493.88], // Am9:   A3 C4 E4 G4 B4
+];
+
+let CHORDS = SIDE_A;
+let chordMs = 6400;
 
 function ensure() {
   if (ctx) return ctx;
@@ -120,16 +138,52 @@ export function startCrackle() {
   crackleGain.gain.linearRampToValueAtTime(0.55, c.currentTime + 0.3);
 }
 
-function setChord(i: number) {
+function setChord(i: number, glide = 0.35) {
   const c = ctx;
   if (!c) return;
+  chordIndex = i;
   const notes = CHORDS[i % CHORDS.length];
+  const ratio = 2 ** (transpose / 12);
   const t = c.currentTime;
   voices.forEach((v, k) => {
-    const f = notes[Math.floor(k / 2) % notes.length];
+    const f = notes[Math.floor(k / 2) % notes.length] * ratio;
     v.osc.frequency.cancelScheduledValues(t);
-    v.osc.frequency.setTargetAtTime(f, t, 0.35); // glide, not jump
+    v.osc.frequency.setTargetAtTime(f, t, glide); // glide, not jump
   });
+}
+
+/** A needle skipping a groove: the click between one track and the next. */
+function skip() {
+  const c = ctx;
+  if (!c || !master) return;
+  const t = c.currentTime;
+  const src = c.createBufferSource();
+  const len = Math.floor(c.sampleRate * 0.05);
+  const buf = c.createBuffer(1, len, c.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len / 6));
+  src.buffer = buf;
+  const bp = c.createBiquadFilter();
+  bp.type = "bandpass";
+  bp.frequency.value = 2400;
+  bp.Q.value = 0.8;
+  const g = c.createGain();
+  g.gain.value = 0.22;
+  src.connect(bp).connect(g).connect(master);
+  src.start(t);
+}
+
+/**
+ * Move the music to another key, as if the next track had started. The
+ * voices slide there rather than jump, which on a turntable is exactly what
+ * a change of speed sounds like.
+ */
+export function setTranspose(semitones: number) {
+  if (semitones === transpose) return;
+  transpose = semitones;
+  if (voices.length === 0) return;
+  skip();
+  setChord(chordIndex, 0.12);
 }
 
 export function startMusic() {
@@ -159,11 +213,13 @@ export function startMusic() {
   wobbleDepth.gain.value = 6; // cents
 
   voices = [];
+  chordIndex = 0;
   const notes = CHORDS[0];
+  const ratio = 2 ** (transpose / 12);
   for (let k = 0; k < notes.length * 2; k++) {
     const osc = c.createOscillator();
     osc.type = k % 2 === 0 ? "triangle" : "sine";
-    osc.frequency.value = notes[Math.floor(k / 2)];
+    osc.frequency.value = notes[Math.floor(k / 2)] * ratio;
     osc.detune.value = k % 2 === 0 ? -5 : 6;
     wobble.connect(wobbleDepth).connect(osc.detune);
     const gain = c.createGain();
@@ -176,8 +232,7 @@ export function startMusic() {
 
   musicBus.gain.linearRampToValueAtTime(0.9, c.currentTime + 2.4);
 
-  let i = 0;
-  chordTimer = window.setInterval(() => setChord(++i), 6400);
+  chordTimer = window.setInterval(() => setChord(chordIndex + 1), chordMs);
 }
 
 /** Lift the needle: music and crackle fall away, a small click as it leaves. */
@@ -211,6 +266,13 @@ export function stopAll() {
   wobble = null;
   crackleSrc = null;
   crackleGain = null;
+}
+
+/** Which side is up decides the chords: slow and dark on A, quicker and brighter on B. */
+export function setSideSound(side: "A" | "B") {
+  CHORDS = side === "B" ? SIDE_B : SIDE_A;
+  chordMs = side === "B" ? 3200 : 6400;
+  transpose = 0;
 }
 
 export function setMuted(m: boolean) {

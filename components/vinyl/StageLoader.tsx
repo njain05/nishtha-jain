@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Component, type ReactNode, useEffect, useState } from "react";
+import { Component, type ReactNode, useEffect, useRef, useState } from "react";
 import { setDeck } from "@/lib/vinyl/deck";
 import { Fallback } from "./Fallback";
 
@@ -43,6 +43,8 @@ class SceneBoundary extends Component<
 
 export function StageLoader() {
   const [gl, setGl] = useState<boolean | null>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = useState(true);
 
   useEffect(() => {
     const ok = webglAvailable();
@@ -50,11 +52,24 @@ export function StageLoader() {
     if (!ok) setDeck({ scene: "unavailable" });
   }, []);
 
-  if (gl === null) return null;
-  if (!gl) return <Fallback />;
+  // Stop drawing the deck once it has scrolled away; the music carries on.
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <SceneBoundary fallback={<Fallback />}>
-      <Stage />
-    </SceneBoundary>
+    <div ref={box} className="absolute inset-0">
+      {gl === null ? null : gl ? (
+        <SceneBoundary fallback={<Fallback />}>
+          <Stage active={onScreen} />
+        </SceneBoundary>
+      ) : (
+        <Fallback />
+      )}
+    </div>
   );
 }

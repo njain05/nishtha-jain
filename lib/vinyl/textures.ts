@@ -157,7 +157,28 @@ function fitText(
   x.fillText(text, 0, y);
 }
 
-export async function makeLabel(): Promise<THREE.Texture> {
+/** The two labels: cream and red on Side A, pink and plum on Side B. */
+const LABELS = {
+  A: {
+    paper: ["#f4ecd9", "#ebe0c7", "#d9cbaa"],
+    fibre: "90,60,30",
+    ink: "#2a1c16",
+    accent: "#b8331f",
+    ring: "  NOW PLAYING  ·  SIDE A — WHAT I BUILD  ·  SIDE B — WHAT I LOVE  ·  ",
+    line: "Built in Ludhiana",
+  },
+  B: {
+    paper: ["#ffe0ee", "#ffc9e1", "#f7a8cb"],
+    fibre: "150,40,90",
+    ink: "#4a1438",
+    accent: "#d10a6c",
+    ring: "  NOW PLAYING  ·  SIDE B — WHAT I LOVE  ·  SIDE A — WHAT I BUILD  ·  ",
+    line: "What I love",
+  },
+} as const;
+
+export async function makeLabel(side: "A" | "B" = "A"): Promise<THREE.Texture> {
+  const L = LABELS[side];
   const t = activeType();
   await Promise.all([
     document.fonts.load(`italic ${t.weight} 110px ${t.display}`),
@@ -173,14 +194,14 @@ export async function makeLabel(): Promise<THREE.Texture> {
   if (!x) return new THREE.Texture();
 
   const mid = S / 2;
-  const ink = "#2a1c16";
-  const red = "#b8331f";
+  const ink = L.ink;
+  const red = L.accent;
 
   // paper
   const paper = x.createRadialGradient(mid, mid - 80, 40, mid, mid, mid);
-  paper.addColorStop(0, "#f4ecd9");
-  paper.addColorStop(0.85, "#ebe0c7");
-  paper.addColorStop(1, "#d9cbaa");
+  paper.addColorStop(0, L.paper[0]);
+  paper.addColorStop(0.85, L.paper[1]);
+  paper.addColorStop(1, L.paper[2]);
   x.fillStyle = paper;
   x.beginPath();
   x.arc(mid, mid, mid, 0, Math.PI * 2);
@@ -188,7 +209,7 @@ export async function makeLabel(): Promise<THREE.Texture> {
 
   // paper fibres
   for (let i = 0; i < 9000; i++) {
-    x.fillStyle = `rgba(90,60,30,${Math.random() * 0.05})`;
+    x.fillStyle = `rgba(${L.fibre},${Math.random() * 0.05})`;
     x.fillRect(Math.random() * S, Math.random() * S, 1 + Math.random() * 2, 1);
   }
 
@@ -210,11 +231,7 @@ export async function makeLabel(): Promise<THREE.Texture> {
   // ring of small type — uppercase stamps, as on a real label
   x.fillStyle = red;
   x.font = `700 22px ${t.body}`;
-  ringText(
-    x,
-    "  NOW PLAYING  ·  SIDE A — WHAT I BUILD  ·  SIDE B — WHAT I LOVE  ·  ",
-    mid * 0.825,
-  );
+  ringText(x, L.ring, mid * 0.825);
 
   // the name, in the display italic
   x.fillStyle = red;
@@ -229,18 +246,11 @@ export async function makeLabel(): Promise<THREE.Texture> {
   );
 
   x.fillStyle = ink;
-  fitText(
-    x,
-    "Built in Ludhiana",
-    (px) => `${t.weight} ${px}px ${t.display}`,
-    40,
-    mid * 1.2,
-    -84,
-  );
+  fitText(x, L.line, (px) => `${t.weight} ${px}px ${t.display}`, 40, mid * 1.2, -84);
 
   // side and speed, either side of the spindle (no face here has a ⅓ glyph)
   x.font = `700 26px ${t.body}`;
-  x.fillText("SIDE A", -148, 4);
+  x.fillText(`SIDE ${side}`, -148, 4);
   x.fillText("33 RPM", 148, 4);
 
   x.font = `400 22px ${t.body}`;
