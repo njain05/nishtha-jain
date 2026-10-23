@@ -8,7 +8,8 @@
  *  - skip:    the click of the needle crossing to the next track
  *
  * The music is a real recording where a side has one (Side A: "The World We
- * Knew", Caravelli Orchestra), played through a gentle record-player tone.
+ * Knew", the song Frank Sinatra sang, in the Caravelli Orchestra's
+ * instrumental), played through a gentle record-player tone.
  * Without one — Side B for now, or if the file can't load — it is synthesised
  * chords with a slow wow and flutter, which also move key track by track.
  */
@@ -29,8 +30,14 @@ const SONGS: Record<Side, string | undefined> = {
 };
 
 /** What the readout says is playing, when a side has a recording. */
-export const SONG_TITLES: Record<Side, { title: string; artist: string } | undefined> = {
-  A: SONGS.A ? { title: "The World We Knew", artist: "Caravelli Orchestra" } : undefined,
+export const SONG_TITLES: Record<
+  Side,
+  { title: string; artist: string; sungBy?: string } | undefined
+> = {
+  // Frank Sinatra's 1967 song, in the Caravelli Orchestra's instrumental.
+  A: SONGS.A
+    ? { title: "The World We Knew", artist: "the Caravelli Orchestra", sungBy: "Frank Sinatra" }
+    : undefined,
   B: undefined,
 };
 

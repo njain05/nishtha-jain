@@ -266,7 +266,7 @@ export function Outro() {
         <p className="mt-24 text-[13px] text-ash">
           Built by hand in Ludhiana, 2026.{" "}
           {SONG_TITLES.A
-            ? `Side A plays “${SONG_TITLES.A.title}” by the ${SONG_TITLES.A.artist}; the crackle, the needle and Side B's chords are synthesised as you listen.`
+            ? `Side A plays “${SONG_TITLES.A.title}”, the song ${SONG_TITLES.A.sungBy} sang, played by ${SONG_TITLES.A.artist}. The crackle, the needle and Side B's chords are synthesised as you listen.`
             : "Every sound on this page is synthesised as you listen."}
         </p>
       </div>

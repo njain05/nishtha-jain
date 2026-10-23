@@ -75,7 +75,7 @@ export function Display() {
   // While a recording is actually playing, the readout names it first.
   const song = useSyncExternalStore(subscribeSong, getSong, () => null);
   const ticker = song
-    ? `${song.title.toUpperCase()}  ·  ${song.artist.toUpperCase()}  ·  ${NOW_PLAYING[side]}`
+    ? `${song.title.toUpperCase()}  ·  ${song.sungBy ? `AS SUNG BY ${song.sungBy.toUpperCase()}  ·  PLAYED BY ` : ""}${song.artist.toUpperCase()}  ·  ${NOW_PLAYING[side]}`
     : NOW_PLAYING[side];
   const busy = loading || state === "cueing" || state === "lifting" || state === "flipping";
   const playing = state === "playing";
