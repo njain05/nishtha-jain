@@ -1,8 +1,9 @@
 "use client";
 
 import { useProgress } from "@react-three/drei";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { type DeckState, flipRecord, type Side, toggleDeck, useDeck } from "@/lib/vinyl/deck";
+import { getSong, subscribeSong } from "@/lib/vinyl/sound";
 
 /**
  * How long Play waits for the 3D scene before working without it. The deck
@@ -71,6 +72,11 @@ export function Display() {
     return () => window.removeEventListener("keydown", onKey);
   }, [loading]);
 
+  // While a recording is actually playing, the readout names it first.
+  const song = useSyncExternalStore(subscribeSong, getSong, () => null);
+  const ticker = song
+    ? `${song.title.toUpperCase()}  ·  ${song.artist.toUpperCase()}  ·  ${NOW_PLAYING[side]}`
+    : NOW_PLAYING[side];
   const busy = loading || state === "cueing" || state === "lifting" || state === "flipping";
   const playing = state === "playing";
 
@@ -83,8 +89,8 @@ export function Display() {
   else
     line = (
       <span className="ticker" aria-hidden>
-        <span>{NOW_PLAYING[side]}</span>
-        <span>{NOW_PLAYING[side]}</span>
+        <span>{ticker}</span>
+        <span>{ticker}</span>
       </span>
     );
 

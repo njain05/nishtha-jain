@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { CONTACT } from "@/data/contact";
 import { HIDDEN_TRACK } from "@/data/tracks";
 import { flipRecord, useDeck } from "@/lib/vinyl/deck";
-import { unlockAudio } from "@/lib/vinyl/sound";
+import { SONG_TITLES, unlockAudio } from "@/lib/vinyl/sound";
 import { WaveRider } from "./WaveRider";
 
 /**
@@ -264,8 +264,10 @@ export function Outro() {
           <FlipButton />
         </div>
         <p className="mt-24 text-[13px] text-ash">
-          Built by hand in Ludhiana, 2026. Every sound on this page is synthesised as you
-          listen.
+          Built by hand in Ludhiana, 2026.{" "}
+          {SONG_TITLES.A
+            ? `Side A plays “${SONG_TITLES.A.title}” by the ${SONG_TITLES.A.artist}; the crackle, the needle and Side B's chords are synthesised as you listen.`
+            : "Every sound on this page is synthesised as you listen."}
         </p>
       </div>
     </footer>

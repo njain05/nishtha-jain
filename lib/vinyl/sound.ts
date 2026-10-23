@@ -1,17 +1,59 @@
 "use client";
 
 /**
- * Everything you hear is synthesised: no audio files, nothing to license.
+ * The deck's sound. The record itself is synthesised:
  *
  *  - crackle: hiss plus sparse pops, the sound of dust in a groove
  *  - drop:    the soft thump of a stylus landing
- *  - music:   two lush R&B chords (Dmaj9 → Bm9) through a warm low-pass,
- *             with a slow pitch wobble — wow and flutter, the thing that
- *             makes a record sound like a record
+ *  - skip:    the click of the needle crossing to the next track
  *
- * When there is a real track to play (their own singing, say), `play(src)`
- * will take a file instead of the chords.
+ * The music is a real recording where a side has one (Side A: "The World We
+ * Knew", Caravelli Orchestra), played through a gentle record-player tone.
+ * Without one — Side B for now, or if the file can't load — it is synthesised
+ * chords with a slow wow and flutter, which also move key track by track.
  */
+
+export type Side = "A" | "B";
+
+/**
+ * Where each side's recording lives. Song files stay out of the public
+ * repository: locally the file sits in public/audio (ignored by git); for the
+ * live site, set NEXT_PUBLIC_SONG_A to wherever it is hosted. With no song,
+ * the side plays its synthesised chords.
+ */
+const SONGS: Record<Side, string | undefined> = {
+  A:
+    process.env.NEXT_PUBLIC_SONG_A ??
+    (process.env.NODE_ENV === "development" ? "/audio/side-a.mp3" : undefined),
+  B: process.env.NEXT_PUBLIC_SONG_B,
+};
+
+/** What the readout says is playing, when a side has a recording. */
+export const SONG_TITLES: Record<Side, { title: string; artist: string } | undefined> = {
+  A: SONGS.A ? { title: "The World We Knew", artist: "Caravelli Orchestra" } : undefined,
+  B: undefined,
+};
+
+const SONG_LEVEL = 0.8;
+
+/**
+ * Which side's recording is actually sounding right now — not merely
+ * configured — so the readout never names a song the deck isn't playing.
+ */
+let sounding: Side | null = null;
+const soundingListeners = new Set<() => void>();
+function setSounding(next: Side | null) {
+  if (next === sounding) return;
+  sounding = next;
+  for (const l of soundingListeners) l();
+}
+export function subscribeSong(listener: () => void) {
+  soundingListeners.add(listener);
+  return () => {
+    soundingListeners.delete(listener);
+  };
+}
+export const getSong = () => (sounding ? (SONG_TITLES[sounding] ?? null) : null);
 
 type Voice = { osc: OscillatorNode; gain: GainNode };
 
@@ -46,6 +88,58 @@ const SIDE_B = [
 
 let CHORDS = SIDE_A;
 let chordMs = 6400;
+let side: Side = "A";
+
+interface Song {
+  el: HTMLAudioElement;
+  gain: GainNode;
+  /** Swept down and back up when the needle skips to the next track. */
+  tone: BiquadFilterNode;
+  ok: boolean;
+  blessed: boolean;
+}
+const songs: Partial<Record<Side, Song>> = {};
+let songPlaying: Song | null = null;
+
+/** The current side's recording, wired into the deck — or null if it has none, or it failed. */
+function songForSide(): Song | null {
+  const src = SONGS[side];
+  const c = ctx;
+  if (!src || !c || !master) return null;
+  let song = songs[side];
+  if (!song) {
+    const el = new Audio();
+    el.crossOrigin = "anonymous";
+    el.preload = "auto";
+    el.loop = true;
+    el.src = src;
+    // A record is warmer than a file: take a little off the very top.
+    const warm = c.createBiquadFilter();
+    warm.type = "highshelf";
+    warm.frequency.value = 7500;
+    warm.gain.value = -5;
+    const tone = c.createBiquadFilter();
+    tone.type = "lowpass";
+    tone.frequency.value = 20000;
+    tone.Q.value = 0.5;
+    const gain = c.createGain();
+    gain.gain.value = 0;
+    c.createMediaElementSource(el).connect(warm).connect(tone).connect(gain).connect(master);
+    const made: Song = { el, gain, tone, ok: true, blessed: false };
+    // If the file can't be played, the side falls back to its chords.
+    el.addEventListener("error", () => {
+      made.ok = false;
+      if (songPlaying === made) {
+        songPlaying = null;
+        setSounding(null);
+        startSynth();
+      }
+    });
+    songs[side] = made;
+    song = made;
+  }
+  return song.ok ? song : null;
+}
 
 function ensure() {
   if (ctx) return ctx;
@@ -99,6 +193,18 @@ function reverb(c: AudioContext) {
 export function unlockAudio() {
   const c = ensure();
   if (c && c.state === "suspended") void c.resume();
+  // iOS only lets a media element play later if it first played during a
+  // gesture: start it silently now and pause it again straight away.
+  const song = songForSide();
+  if (song && !song.blessed) {
+    song.blessed = true;
+    song.el
+      .play()
+      .then(() => {
+        if (songPlaying !== song) song.el.pause();
+      })
+      .catch(() => undefined);
+  }
 }
 
 /** The stylus lands: a low thump and a short burst of surface noise. */
@@ -135,7 +241,8 @@ export function startCrackle() {
   crackleGain.gain.value = 0;
   crackleSrc.connect(hp).connect(lp).connect(crackleGain).connect(master);
   crackleSrc.start();
-  crackleGain.gain.linearRampToValueAtTime(0.55, c.currentTime + 0.3);
+  // Quieter under a real recording than under the chords.
+  crackleGain.gain.linearRampToValueAtTime(songForSide() ? 0.3 : 0.55, c.currentTime + 0.3);
 }
 
 function setChord(i: number, glide = 0.35) {
@@ -181,12 +288,61 @@ function skip() {
 export function setTranspose(semitones: number) {
   if (semitones === transpose) return;
   transpose = semitones;
+  if (songPlaying) {
+    // A recording can't change key, so it changes track the way a record
+    // does: the needle clicks across and the sound dips for a moment.
+    skip();
+    dip(songPlaying);
+    return;
+  }
   if (voices.length === 0) return;
   skip();
   setChord(chordIndex, 0.12);
 }
 
+function dip(song: Song) {
+  const c = ctx;
+  if (!c) return;
+  const t = c.currentTime;
+  const f = song.tone.frequency;
+  f.cancelScheduledValues(t);
+  f.setValueAtTime(f.value, t);
+  f.exponentialRampToValueAtTime(700, t + 0.09);
+  f.exponentialRampToValueAtTime(20000, t + 0.7);
+}
+
+/** The needle is down: the side's recording if it has one, its chords if not. */
 export function startMusic() {
+  const c = ensure();
+  if (!c || !master) return;
+  const song = songForSide();
+  if (song) playSong(song);
+  else startSynth();
+}
+
+function playSong(song: Song) {
+  const c = ctx;
+  if (!c || songPlaying === song) return;
+  songPlaying = song;
+  const t = c.currentTime;
+  song.gain.gain.cancelScheduledValues(t);
+  song.gain.gain.setValueAtTime(song.gain.gain.value, t);
+  song.gain.gain.linearRampToValueAtTime(SONG_LEVEL, t + 1.6);
+  const playing = side;
+  song.el
+    .play()
+    .then(() => {
+      if (songPlaying === song) setSounding(playing);
+    })
+    .catch(() => {
+      if (songPlaying === song) {
+        songPlaying = null;
+        startSynth();
+      }
+    });
+}
+
+function startSynth() {
   const c = ensure();
   if (!c || !master || musicBus) return;
   musicBus = c.createGain();
@@ -243,6 +399,19 @@ export function stopAll() {
   if (chordTimer) window.clearInterval(chordTimer);
   chordTimer = null;
 
+  // The recording fades and pauses where it is, so the next drop picks up there.
+  if (songPlaying) {
+    const song = songPlaying;
+    songPlaying = null;
+    setSounding(null);
+    song.gain.gain.cancelScheduledValues(t);
+    song.gain.gain.setValueAtTime(song.gain.gain.value, t);
+    song.gain.gain.linearRampToValueAtTime(0, t + 0.6);
+    window.setTimeout(() => {
+      if (songPlaying !== song) song.el.pause();
+    }, 650);
+  }
+
   if (musicBus) {
     musicBus.gain.cancelScheduledValues(t);
     musicBus.gain.setValueAtTime(musicBus.gain.value, t);
@@ -269,9 +438,10 @@ export function stopAll() {
 }
 
 /** Which side is up decides the chords: slow and dark on A, quicker and brighter on B. */
-export function setSideSound(side: "A" | "B") {
-  CHORDS = side === "B" ? SIDE_B : SIDE_A;
-  chordMs = side === "B" ? 3200 : 6400;
+export function setSideSound(next: Side) {
+  side = next;
+  CHORDS = next === "B" ? SIDE_B : SIDE_A;
+  chordMs = next === "B" ? 3200 : 6400;
   transpose = 0;
 }
 

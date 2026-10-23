@@ -14,8 +14,10 @@ built on.
 ## Built with
 
 Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, three.js through React Three
-Fiber and drei, Motion, GSAP and Lenis. Every sound is synthesised in the browser with the Web
-Audio API — there are no audio files.
+Fiber and drei, Motion, GSAP and Lenis. The record — crackle, needle, the chords on Side B — is
+synthesised in the browser with the Web Audio API. Side A plays a recording when one is
+provided: song files are kept out of this repository (`public/audio/` is ignored); set
+`NEXT_PUBLIC_SONG_A` to where the file is hosted, and without it Side A plays its own chords.
 
 ## Run it
 

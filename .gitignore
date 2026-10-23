@@ -16,3 +16,6 @@ source-documents/
 
 # Local type specimens, not part of the site
 app/lab/
+
+# Songs stay out of the public repository (see lib/vinyl/sound.ts)
+public/audio/
