@@ -65,7 +65,7 @@ export function About() {
 
         <p
           ref={ref}
-          className="face-display mt-8 text-[clamp(1.625rem,4.25vw,3.375rem)] leading-[1.18] lg:mt-10"
+          className="face-display mt-8 text-[clamp(1.5rem,3.95vw,3.125rem)] leading-[1.18] lg:mt-10"
         >
           {reduced
             ? WORDS.map((w) => (
