@@ -1,0 +1,98 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #282c34;
+    color: white;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h1 {
+    margin-bottom: 10px;
+    font-size: 2em;
+    color: #61dafb;
+}
+
+.game-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+canvas {
+    border: 2px solid #61dafb;
+    margin-bottom: 20px;
+    background-color: #1c1c1c;
+}
+
+/* Modal Styles */
+.modal {
+    display: block; /* Show the modal by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    background-color: #333;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #61dafb;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    color: #fff;
+}
+
+.modal-content h2 {
+    color: #61dafb;
+    margin-bottom: 20px;
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+}
+
+#closeModal {
+    background-color: #c3073f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#closeModal:hover {
+    background-color: #e91e63;
+}
+
+button {
+    background-color: #61dafb;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #21a1f1;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+#level, #score {
+    font-weight: bold;
+    color: #61dafb;
+}

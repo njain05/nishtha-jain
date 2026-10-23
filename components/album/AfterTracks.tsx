@@ -2,12 +2,12 @@
 
 import { useLenis } from "lenis/react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { CONTACT } from "@/data/contact";
 import { HIDDEN_TRACK } from "@/data/tracks";
 import { flipRecord, useDeck } from "@/lib/vinyl/deck";
 import { unlockAudio } from "@/lib/vinyl/sound";
+import { WaveRider } from "./WaveRider";
 
 /**
  * After the last track: a stretch of run-out groove, then the hidden track —
@@ -19,8 +19,10 @@ export function HiddenTrack() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  // The screen straightens and rises as it comes up, like a photo picked up off a table.
-  const rotate = useTransform(scrollYProgress, [0, 0.5], reduced ? [0, 0] : [-7, -1.5]);
+  // The screen straightens and rises as it comes up, like a photo picked up
+  // off a table — and once the game is on, it sits dead level to be played.
+  const [live, setLive] = useState(false);
+  const rotate = useTransform(scrollYProgress, [0, 0.5], reduced ? [0, 0] : [-7, 0]);
   const y = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [90, -60]);
   const t = HIDDEN_TRACK;
 
@@ -64,16 +66,8 @@ export function HiddenTrack() {
           </div>
         </div>
 
-        <motion.figure style={{ rotate, y }} className="relative">
-          <div className="relative aspect-[1440/952] overflow-hidden rounded-[10px] border border-white/10 shadow-[0_50px_90px_-30px_rgb(0_0_0/0.9)]">
-            <Image
-              src="/work/wave-rider.jpg"
-              alt="Trigonometric Wave Rider mid-game: a ball riding a sine wave while blocks fall."
-              fill
-              sizes="(max-width: 1024px) 92vw, 52vw"
-              className="object-cover"
-            />
-          </div>
+        <motion.figure style={{ rotate: live ? 0 : rotate, y }} className="relative">
+          <WaveRider live={live} onPlay={() => setLive(true)} />
         </motion.figure>
       </div>
     </section>

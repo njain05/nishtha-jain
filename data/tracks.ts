@@ -272,7 +272,10 @@ export const HIDDEN_TRACK: Track = {
   details: ["HTML, CSS and JavaScript, and a high score saved in the browser."],
   stack: ["HTML", "CSS", "JavaScript", "Canvas"],
   links: [
-    { label: "Play it", href: "https://njain05.github.io/trigonometric_wave_rider_game/" },
+    {
+      label: "Open it full size",
+      href: "https://njain05.github.io/trigonometric_wave_rider_game/",
+    },
     { label: "GitHub", href: "https://github.com/njain05/trigonometric_wave_rider_game" },
   ],
 };
