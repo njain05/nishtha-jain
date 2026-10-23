@@ -95,6 +95,40 @@ export const LOVES: Track[] = [
   },
 ];
 
-/** The bonus track at the end of Side B, read like lyrics as you scroll. */
-export const LIFE =
-  "I want to be good — *the best version of myself.* I want a home that is mine alone: a space I own, where the door opens for me and no one else. I want to travel, and taste every kind of food the world has to offer, vegetarian of course. And one day I want to take my parents around the world — *the world they never got to see while they were busy raising me.*";
+/**
+ * The bonus track at the end of Side B: what Nishtha wants from life, as a
+ * wishlist of tickets. `admit` and `stub` are the small print on each one;
+ * *asterisks* set a phrase in italic.
+ */
+export const WISHES: { admit: string; text: string; stub: string; color: string }[] = [
+  {
+    admit: "Admit one",
+    text: "To be good — *the best version of myself.*",
+    stub: "No. 01",
+    color: "#ffb3d4",
+  },
+  {
+    admit: "Admit one",
+    text: "A home of my own: a space I own, where *the door opens for me and no one else.*",
+    stub: "Just me",
+    color: "#cdb8ff",
+  },
+  {
+    admit: "Boarding",
+    text: "To travel, and taste every kind of food the world has to offer — *vegetarian, of course.*",
+    stub: "From Ludhiana · To everywhere",
+    color: "#a9b6ff",
+  },
+  {
+    admit: "Standing",
+    text: "To be in the crowd at a concert, *lightstick in hand.*",
+    stub: "General admission",
+    color: "#ffc4a8",
+  },
+  {
+    admit: "Admit three",
+    text: "To take my parents around the world — *the world they never got to see while they were busy raising me.*",
+    stub: "Mum · Dad · Me",
+    color: "#ffe08f",
+  },
+];

@@ -2,10 +2,11 @@
 
 import { useEffect } from "react";
 import { About } from "@/components/album/About";
-import { HiddenTrack, LifeGoals, NextRelease } from "@/components/album/AfterTracks";
+import { HiddenTrack, NextRelease } from "@/components/album/AfterTracks";
 import { Credits } from "@/components/album/Credits";
 import { Discography } from "@/components/album/Discography";
 import { Tracklist } from "@/components/album/Tracklist";
+import { Wishlist } from "@/components/album/Wishlist";
 import { LOVES } from "@/data/loves";
 import { TRACKS } from "@/data/tracks";
 import { restoreSide, useDeck } from "@/lib/vinyl/deck";
@@ -21,7 +22,7 @@ export function Sides() {
     return (
       <>
         <Tracklist key="B" tracks={LOVES} side="B" />
-        <LifeGoals />
+        <Wishlist />
       </>
     );
   return (

@@ -4,11 +4,9 @@ import { useLenis } from "lenis/react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { CONTACT } from "@/data/contact";
-import { LIFE } from "@/data/loves";
 import { HIDDEN_TRACK } from "@/data/tracks";
 import { flipRecord, useDeck } from "@/lib/vinyl/deck";
 import { unlockAudio } from "@/lib/vinyl/sound";
-import { Lyrics } from "./Lyrics";
 import { WaveRider } from "./WaveRider";
 
 /**
@@ -124,24 +122,6 @@ export function NextRelease() {
             Placement offer, 2026. Release date to be announced.
           </p>
         </div>
-      </div>
-    </section>
-  );
-}
-
-/** Side B's close: what they want from life, lighting up as you read it. */
-export function LifeGoals() {
-  return (
-    <section aria-labelledby="goals-title" className="relative px-5 py-36 sm:px-8 lg:px-14">
-      <div className="mx-auto max-w-[1280px]">
-        <p className="led text-[13px] font-[700]">BONUS TRACK</p>
-        <h2 id="goals-title" className="mt-5 text-[clamp(2.4rem,6vw,4.6rem)] leading-[0.98]">
-          What I want from life
-        </h2>
-        <Lyrics
-          text={LIFE}
-          className="face-display mt-10 text-[clamp(1.5rem,3.95vw,3.125rem)] leading-[1.18]"
-        />
       </div>
     </section>
   );
