@@ -3,12 +3,19 @@ export interface Post {
   org: string;
   where?: string;
   from: string;
-  to: string;
+  /** Omitted for a role that hasn't started yet. */
+  to?: string;
   lines: string[];
 }
 
 /** Experience, newest first. */
 export const POSTS: Post[] = [
+  {
+    role: "AI Native Software Engineer Intern",
+    org: "EPAM India",
+    from: "Incoming",
+    lines: ["Placement offer, 2026."],
+  },
   {
     role: "Generative AI / ML Intern",
     org: "UtilStop",

@@ -13,7 +13,7 @@ const SCENE_GRACE_MS = 9000;
 
 const NOW_PLAYING =
   // No colons: at this size Doto's colon reads as a dagger.
-  "NOW PLAYING  ·  NISHTHA JAIN  ·  SIDE A  WHAT I BUILD  ·  SIDE B  WHAT I LOVE  ·  ";
+  "NOW PLAYING  ·  NISHTHA JAIN  ·  SOFTWARE & APPLIED AI ENGINEER  ·  INCOMING AT EPAM  ·  SIDE A  WHAT I BUILD  ·  SIDE B  WHAT I LOVE  ·  ";
 
 function clock(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000));

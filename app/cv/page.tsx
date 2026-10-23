@@ -49,10 +49,16 @@ export default function CvPage() {
               key={`${p.org}-${p.from}`}
               className="grid gap-3 sm:grid-cols-[11rem_1fr] sm:gap-10"
             >
-              <p className="text-ash text-sm tabular-nums sm:pt-1.5">
+              <p
+                className={`text-sm tabular-nums sm:pt-1.5 ${p.to ? "text-ash" : "text-amber/90"}`}
+              >
                 {p.from}
-                <span className="mx-1.5 text-umber">—</span>
-                {p.to}
+                {p.to ? (
+                  <>
+                    <span className="mx-1.5 text-umber">—</span>
+                    {p.to}
+                  </>
+                ) : null}
               </p>
               <div>
                 <h3 className="text-[1.45rem]">{p.role}</h3>

@@ -10,17 +10,25 @@ export function Overlay() {
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-10 flex flex-col justify-between">
-        <header className="flex items-start justify-between gap-6 px-5 pt-5 sm:px-8 sm:pt-7">
+        {/* The nav sits beside the (short) name only, so the lines beneath get
+            the full width instead of being squeezed into a column on phones. */}
+        <header className="relative px-5 pt-5 sm:px-8 sm:pt-7">
           <div>
             <p className="face-display text-[28px] leading-none sm:text-[32px]">Nishtha Jain</p>
-            <p className="face-display mt-1.5 text-[16px] text-sandal italic leading-snug sm:text-[17px]">
-              Final-year Computer Science,
-              <br className="sm:hidden" /> GNDEC Ludhiana
+            <p className="face-display mt-1.5 text-[17px] text-sandal italic leading-snug sm:text-[19px]">
+              Software &amp; Applied AI Engineer
+            </p>
+            <p className="mt-2.5 text-[12.5px] text-ash leading-relaxed">
+              <span className="text-ivory/85">
+                Incoming AI Native Software Engineer Intern, EPAM India
+              </span>
+              <br />
+              Final-year Computer Science, GNDEC Ludhiana
             </p>
           </div>
           <nav
             aria-label="Elsewhere"
-            className="pointer-events-auto -mr-2 flex shrink-0 items-center gap-0.5 whitespace-nowrap text-[13px]"
+            className="pointer-events-auto absolute top-4 right-2 flex items-center gap-0.5 whitespace-nowrap text-[13px] sm:top-6 sm:right-5"
           >
             <button
               type="button"
