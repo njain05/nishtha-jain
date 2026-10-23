@@ -42,7 +42,7 @@ function Meter({ commits, note }: { commits: number; note?: string }) {
 }
 
 function Release({ r, i }: { r: (typeof RELEASES)[number]; i: number }) {
-  const upcoming = r.commits === undefined;
+  const upcoming = r.upcoming === true;
   return (
     <li className="relative flex w-[min(80vw,25rem)] shrink-0 flex-col pt-14">
       {/* where this year sits on the groove */}
@@ -56,6 +56,9 @@ function Release({ r, i }: { r: (typeof RELEASES)[number]; i: number }) {
       <div
         className={`flex h-full flex-col rounded-[6px] border p-7 ${upcoming ? "border-amber/40 border-dashed" : "border-ivory/10 bg-ivory/[0.025]"}`}
       >
+        {r.stage ? (
+          <p className="mb-3 text-[12px] text-ash uppercase tracking-[0.16em]">{r.stage}</p>
+        ) : null}
         <p className="face-display text-[clamp(3rem,6vw,4.5rem)] leading-none">{r.year}</p>
         <h3 className="face-display mt-3 text-[clamp(1.25rem,2vw,1.55rem)] text-amber italic">
           {r.title}
@@ -118,7 +121,7 @@ export function Discography() {
           How I got here
         </h2>
         <p className="mt-5 max-w-[22rem] text-[15px] text-ash leading-relaxed">
-          A release a year, and the next one on the way. Keep scrolling — the years go by
+          From 9th class to EPAM, with the next one on the way. Keep scrolling — the years go by
           sideways.
         </p>
       </div>

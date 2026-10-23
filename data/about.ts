@@ -9,7 +9,7 @@
  * the display italic.
  */
 export const ABOUT =
-  "I'm Nishtha, a final-year computer science student at GNDEC in Ludhiana. I build software for *real people* — a home-services platform running across the UAE, AI pipelines that answer from real data, and websites for local businesses. I learn by shipping: from a page of hand-written HTML in 2023 to payments, live tracking and the security underneath them. *Next stop, EPAM India.*";
+  "I'm Nishtha, a final-year computer science student at GNDEC in Ludhiana. I build software for *real people* — a home-services platform running across the UAE, AI pipelines that answer from real data, and websites for local businesses. I fell for computers in 9th class and learned to code on my first laptop during lockdown. Scratch and SQL then; payments, live tracking and the security underneath them now. *Next stop, EPAM India.*";
 
 export const FACTS: { big: string; small: string }[] = [
   { big: "900+", small: "students taught AI–ML fundamentals at college induction" },
@@ -124,28 +124,59 @@ export const CREDITS: { group: string; items: string[] }[] = [
 ];
 
 /**
- * The journey as a discography, one release a year. `commits` are their own
- * commits on GitHub that year (counted 23 Oct 2026).
+ * The journey as a discography, from school to now. The school years are in
+ * Nishtha's own words (23 Oct 2026). `commits` are their own commits on
+ * GitHub that year (counted 23 Oct 2026); school came before GitHub.
  */
 export const RELEASES: {
   year: string;
+  /** Where they were: shown above the year. */
+  stage?: string;
   title: string;
   lines: string[];
   commits?: number;
   note?: string;
+  /** Not out yet. */
+  upcoming?: boolean;
 }[] = [
   {
+    year: "2019",
+    stage: "BCM School · 9th class",
+    title: "The first spark",
+    lines: [
+      "I got interested in computers and chose Information Technology — that's where my love for coding began.",
+    ],
+  },
+  {
+    year: "2020",
+    stage: "BCM School · 10th class",
+    title: "Lockdown, and a laptop",
+    lines: [
+      "Lockdown moved everything online, and I got my first laptop.",
+      "Learned to code: the fundamentals in Scratch, then basic SQL.",
+    ],
+  },
+  {
+    year: "2021",
+    stage: "BCM School · 11th class",
+    title: "Python",
+    lines: ["Chose Computer Science, and started writing Python."],
+  },
+  {
     year: "2023",
+    stage: "BCM School → GNDEC",
     title: "Debut",
     lines: [
-      "Started B.Tech Computer Science at GNDEC, Ludhiana.",
-      "Wrote my first portfolio by hand, in plain HTML.",
+      "Finished school at BCM School, Ludhiana, in March.",
+      "Started B.Tech Computer Science at GNDEC, Ludhiana, and began learning web development.",
+      "Made my first portfolio by hand, in plain HTML.",
       "Joined Causmic Club as Senior Technical Executive.",
     ],
     commits: 8,
   },
   {
     year: "2024",
+    stage: "GNDEC",
     title: "First game",
     lines: [
       "Trigonometric Wave Rider, after the Chrome dinosaur game — the hidden track, playable above.",
@@ -154,6 +185,7 @@ export const RELEASES: {
   },
   {
     year: "2025",
+    stage: "GNDEC",
     title: "Making it think",
     lines: [
       "Machine Learning Intern, Cognifyz: models over 5,000+ records, about 15% better after feature engineering.",
@@ -164,6 +196,7 @@ export const RELEASES: {
   },
   {
     year: "2026",
+    stage: "GNDEC",
     title: "Real work, real people",
     lines: [
       "Generative AI / ML Intern, UtilStop: the web platform, the pricing-intelligence pipeline, the security layer.",
@@ -174,7 +207,9 @@ export const RELEASES: {
   },
   {
     year: "Next",
+    stage: "Incoming",
     title: "EPAM India",
+    upcoming: true,
     lines: ["AI Native Software Engineer Intern.", "Placement offer, 2026."],
   },
 ];
