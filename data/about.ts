@@ -9,7 +9,7 @@
  * the display italic.
  */
 export const ABOUT =
-  "I'm Nishtha, a final-year computer science student at GNDEC in Ludhiana. I build software for *real people* — a home-services platform running across the UAE, AI pipelines that answer from real data, and websites for local businesses. I fell for computers in 9th class and learned to code on my first laptop during lockdown. Scratch and SQL then; payments, live tracking and the security underneath them now. *Next stop, EPAM India.*";
+  "I'm Nishtha, a final-year computer science student at GNDEC in Ludhiana. I build software for *real people* — a home-services platform running across the UAE, AI pipelines that answer from real data, and websites for local businesses. I fell for computers at 13, and learned to code on my first laptop during lockdown. Scratch and SQL then; payments, live tracking and the security underneath them now. *Next stop, EPAM India.*";
 
 export const FACTS: { big: string; small: string }[] = [
   { big: "900+", small: "students taught AI–ML fundamentals at college induction" },
