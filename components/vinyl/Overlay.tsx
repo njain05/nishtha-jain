@@ -7,7 +7,7 @@ import { Display } from "./Display";
 
 /**
  * What the name says about itself, per side: the work on Side A, the person
- * on Side B. Side B's lines are their own interests, waiting for their words.
+ * on Side B — "self-proclaimed singer" is Nishtha's own line.
  */
 const LINES: Record<Side, { title: string; lines: [string, string] }> = {
   A: {
@@ -18,8 +18,11 @@ const LINES: Record<Side, { title: string; lines: [string, string] }> = {
     ],
   },
   B: {
-    title: "K-pop, K-dramas & the cosmos",
-    lines: ["Singing; R&B, pop, classical and slow EDM", "Photography, and so much more"],
+    title: "Self-proclaimed singer",
+    lines: [
+      "K-pop since 2019, K-dramas always, the cosmos forever",
+      "And a camera, pointed mostly at nature",
+    ],
   },
 };
 

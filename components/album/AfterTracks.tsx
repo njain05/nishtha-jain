@@ -4,9 +4,11 @@ import { useLenis } from "lenis/react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { CONTACT } from "@/data/contact";
+import { LIFE } from "@/data/loves";
 import { HIDDEN_TRACK } from "@/data/tracks";
 import { flipRecord, useDeck } from "@/lib/vinyl/deck";
 import { unlockAudio } from "@/lib/vinyl/sound";
+import { Lyrics } from "./Lyrics";
 import { WaveRider } from "./WaveRider";
 
 /**
@@ -127,7 +129,7 @@ export function NextRelease() {
   );
 }
 
-/** Side B's close: the goals, still to be written in their words. */
+/** Side B's close: what they want from life, lighting up as you read it. */
 export function LifeGoals() {
   return (
     <section aria-labelledby="goals-title" className="relative px-5 py-36 sm:px-8 lg:px-14">
@@ -136,10 +138,10 @@ export function LifeGoals() {
         <h2 id="goals-title" className="mt-5 text-[clamp(2.4rem,6vw,4.6rem)] leading-[0.98]">
           What I want from life
         </h2>
-        <p className="face-display mt-8 max-w-[40rem] rounded-[4px] border border-ivory/25 border-dashed px-5 py-4 text-[clamp(1.1rem,1.8vw,1.35rem)] text-ash italic">
-          Your words: the life goals you want here — the places, the people, the things you want
-          to have done.
-        </p>
+        <Lyrics
+          text={LIFE}
+          className="face-display mt-10 text-[clamp(1.5rem,3.95vw,3.125rem)] leading-[1.18]"
+        />
       </div>
     </section>
   );

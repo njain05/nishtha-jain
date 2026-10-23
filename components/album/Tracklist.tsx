@@ -6,6 +6,7 @@ import {
   type MotionValue,
   motion,
   useInView,
+  useIsPresent,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
@@ -145,10 +146,12 @@ function SleeveUnit({
  * AnimatePresence hands the latest direction to whatever is exiting.
  */
 const EASE = [0.22, 1, 0.36, 1] as const;
+/** The incoming track waits this long, so the outgoing one is mostly gone before it rises. */
+const AFTER = 0.18;
 
 const word = (k: number): Variants => ({
   enter: (d: number) => ({ y: `${d * 105}%` }),
-  show: { y: "0%", transition: { duration: 0.7, ease: EASE, delay: k * 0.05 } },
+  show: { y: "0%", transition: { duration: 0.7, ease: EASE, delay: AFTER + k * 0.05 } },
   leave: (d: number) => ({
     y: `${-d * 105}%`,
     transition: { duration: 0.28, ease: [0.4, 0, 1, 1] },
@@ -157,7 +160,7 @@ const word = (k: number): Variants => ({
 
 const line = (delay: number): Variants => ({
   enter: (d: number) => ({ y: d * 22, opacity: 0 }),
-  show: { y: 0, opacity: 1, transition: { duration: 0.6, ease: EASE, delay } },
+  show: { y: 0, opacity: 1, transition: { duration: 0.6, ease: EASE, delay: AFTER + delay } },
   leave: (d: number) => ({ y: -d * 14, opacity: 0, transition: { duration: 0.22 } }),
 });
 
@@ -192,13 +195,16 @@ function TrackText({
   dir: number;
   onNotes: () => void;
 }) {
+  // While it is leaving, the old track's text is only an image of itself:
+  // clicks go through it to the track that is arriving.
+  const present = useIsPresent();
   return (
     <motion.div
       initial="enter"
       animate="show"
       exit="leave"
       custom={dir}
-      className="max-w-[34rem]"
+      className={`max-w-[34rem] [grid-area:1/1] ${present ? "" : "pointer-events-none"}`}
     >
       <motion.p
         custom={dir}
@@ -398,8 +404,11 @@ export function Tracklist({ tracks, side }: { tracks: Track[]; side: Side }) {
         </h2>
 
         <div className="relative mx-auto flex h-full max-w-[1480px] flex-col px-5 pt-16 pb-6 sm:px-8 lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-6 lg:px-14 lg:pt-0 lg:pb-0">
-          <div className="relative order-2 shrink-0 lg:order-1">
-            <AnimatePresence mode="wait" custom={dir} initial={false}>
+          {/* The outgoing and incoming tracks share one grid cell and cross over,
+              rather than the new one waiting for the old to leave: with "wait",
+              a quick scroll back through two tracks could strand the old text. */}
+          <div className="relative order-2 grid shrink-0 lg:order-1">
+            <AnimatePresence custom={dir} initial={false}>
               <TrackText
                 key={track.id}
                 track={track}

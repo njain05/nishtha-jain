@@ -1,56 +1,10 @@
 "use client";
 
-import {
-  type MotionValue,
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
-import { useRef } from "react";
 import { ABOUT, FACTS } from "@/data/about";
+import { Lyrics } from "./Lyrics";
 
-/**
- * About the artist, read like lyrics on a screen: the whole paragraph is
- * there from the start, dim, and each word lights as the scroll reaches it.
- */
-
-type Word = { text: string; italic: boolean; key: string };
-
-/** Split the paragraph into words, keeping *phrases* in italic. */
-function words(source: string): Word[] {
-  const out: Word[] = [];
-  source.split(/(\*[^*]+\*)/).forEach((part, p) => {
-    const italic = part.startsWith("*");
-    const text = italic ? part.slice(1, -1) : part;
-    for (const [w, word] of text.split(/\s+/).filter(Boolean).entries())
-      out.push({ text: word, italic, key: `${p}.${w}` });
-  });
-  return out;
-}
-
-const WORDS = words(ABOUT);
-
-function Lit({ word, i, progress }: { word: Word; i: number; progress: MotionValue<number> }) {
-  // Each word has its own short stretch of the scroll; a few overlap, so a
-  // phrase lights as a phrase rather than one word at a time.
-  const start = i / WORDS.length;
-  const opacity = useTransform(progress, [start - 0.02, start + 0.05], [0.16, 1]);
-  return (
-    <motion.span
-      style={{ opacity }}
-      className={word.italic ? "face-display text-amber italic" : undefined}
-    >
-      {word.text}{" "}
-    </motion.span>
-  );
-}
-
+/** About the artist: a paragraph that lights up as you read it, then four facts. */
 export function About() {
-  const ref = useRef<HTMLParagraphElement>(null);
-  const reduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.45"] });
-
   return (
     <section
       id="about"
@@ -63,20 +17,10 @@ export function About() {
           About Nishtha Jain
         </h2>
 
-        <p
-          ref={ref}
+        <Lyrics
+          text={ABOUT}
           className="face-display mt-8 text-[clamp(1.5rem,3.95vw,3.125rem)] leading-[1.18] lg:mt-10"
-        >
-          {reduced
-            ? WORDS.map((w) => (
-                <span key={w.key} className={w.italic ? "text-amber italic" : undefined}>
-                  {w.text}{" "}
-                </span>
-              ))
-            : WORDS.map((w, i) => (
-                <Lit key={w.key} word={w} i={i} progress={scrollYProgress} />
-              ))}
-        </p>
+        />
 
         <dl className="mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-ivory/10 border-t pt-10 lg:grid-cols-4">
           {FACTS.map((f) => (

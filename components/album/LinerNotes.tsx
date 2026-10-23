@@ -35,7 +35,7 @@ export function LinerNotes({ track, onClose }: { track: Track | null; onClose: (
           <header className="flex items-start justify-between gap-6 border-[#1d1612]/15 border-b pb-6">
             <div>
               <p className="text-[11px] text-[#6b5a4c] uppercase tracking-[0.18em]">
-                Liner notes · {track.year}
+                Liner notes{track.year ? ` · ${track.year}` : ""}
               </p>
               <h2
                 id="liner-title"
@@ -66,10 +66,14 @@ export function LinerNotes({ track, onClose }: { track: Track | null; onClose: (
             ))}
           </div>
 
-          <h3 className="mt-8 text-[11px] text-[#6b5a4c] uppercase tracking-[0.18em] [font-family:var(--font-body)]">
-            Credits
-          </h3>
-          <p className="mt-2 text-[15px]">{track.stack.join(" · ")}</p>
+          {track.stack.length ? (
+            <>
+              <h3 className="mt-8 text-[11px] text-[#6b5a4c] uppercase tracking-[0.18em] [font-family:var(--font-body)]">
+                Credits
+              </h3>
+              <p className="mt-2 text-[15px]">{track.stack.join(" · ")}</p>
+            </>
+          ) : null}
 
           {track.links.length || track.note ? (
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-[#1d1612]/15 border-t pt-5 text-[15px]">
