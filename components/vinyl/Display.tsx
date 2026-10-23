@@ -121,12 +121,12 @@ export function Display() {
         </button>
         {/* Mouse and keyboard get the shortcut; touch screens get no "space" they cannot press. */}
         <span className="text-[12px] text-ash pointer-coarse:hidden">
-          {scene === "ready" ? "or click the record · " : "or press "}
-          <kbd className="font-sans">space</kbd>
+          {scene === "ready" ? "Or click the record, or press " : "Or press "}
+          <kbd className="font-sans">Space</kbd>
         </span>
         {scene === "ready" ? (
           <span className="hidden text-[12px] text-ash pointer-coarse:inline">
-            or tap the record
+            Or tap the record
           </span>
         ) : null}
       </div>

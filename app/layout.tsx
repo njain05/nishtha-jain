@@ -34,16 +34,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        {/* The name and the line under it are the first things painted. */}
         <link
           rel="preload"
-          href="/fonts/zodiak-400.woff2"
+          href="/fonts/bluu-next-700.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
         />
         <link
           rel="preload"
-          href="/fonts/switzer-400.woff2"
+          href="/fonts/bluu-next-700-italic.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"

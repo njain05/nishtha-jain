@@ -297,13 +297,14 @@ export function Turntable() {
   const yawRef = useRef<THREE.Group>(null);
   const pitchRef = useRef<THREE.Group>(null);
 
+  // The label is drawn in the page's display face, read from the stylesheet.
   useEffect(() => {
     let alive = true;
     let made: THREE.Texture | null = null;
-    makeLabel().then((t) => {
-      made = t;
-      if (alive) setLabel(t);
-      else t.dispose();
+    makeLabel().then((tex) => {
+      made = tex;
+      if (alive) setLabel(tex);
+      else tex.dispose();
     });
     return () => {
       alive = false;

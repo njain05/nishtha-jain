@@ -17,9 +17,9 @@
   --color-amber: #ffb43a;
   --color-label: #c8412b;
 
-  --font-display: "Zodiak", "Iowan Old Style", Georgia, serif;
-  --font-body: "Switzer", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-deva: "Tiro Devanagari Sanskrit", "Noto Serif Devanagari", serif;
+  /* Bluu Next (Velvetyne) — bold only, with a calligraphic italic. */
+  --font-display: "Bluu Next", "Iowan Old Style", Georgia, serif;
+  --font-body: "Apfel Grotezk", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-dot: "Doto", ui-monospace, monospace;
 
   --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -28,6 +28,9 @@
 @layer base {
   :root {
     --graha: var(--color-amber);
+    /* Bluu Next only exists at 700, so the display weight is fixed there. */
+    --display-weight: 700;
+    --display-tracking: 0em;
   }
 
   * {
@@ -52,9 +55,9 @@
 
   :is(h1, h2, h3, h4) {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: var(--display-weight);
     line-height: 1.08;
-    letter-spacing: -0.015em;
+    letter-spacing: var(--display-tracking);
     text-wrap: balance;
     margin: 0;
   }
@@ -87,20 +90,18 @@
     color: var(--color-ivory);
   }
 
-  .deva {
-    font-family: var(--font-deva);
-    line-height: 1.45;
-  }
+}
+
+/* The display serif at its proper weight, whichever face is active. */
+@utility face-display {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
 }
 
 @layer components {
   .prose-measure {
     max-width: 64ch;
-  }
-  .lede {
-    font-family: var(--font-display);
-    font-size: 1.333rem;
-    line-height: 1.5;
   }
   .rule {
     height: 1px;

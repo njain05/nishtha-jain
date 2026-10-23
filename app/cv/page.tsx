@@ -9,46 +9,40 @@ export const metadata: Metadata = {
     "The full record — experience, projects, technical skills, education and certifications for Nishtha Jain.",
 };
 
-/** Section heads carry a Devanagari numeral, which is the only ornament here. */
-const DEVA_NUM = ["०", "१", "२", "३", "४", "५", "६"];
-
-function Head({ n, children }: { n: number; children: string }) {
+function Head({ n, title, note }: { n: number; title: string; note: string }) {
   return (
-    <header className="mb-10 flex items-baseline gap-5 border-umber border-b pb-4">
-      <span className="deva text-graha text-lg leading-none">{DEVA_NUM[n]}</span>
-      <h2 className="font-display text-[clamp(1.5rem,3.4vw,1.9rem)] lowercase">{children}</h2>
+    <header className="mb-10 border-umber border-b pb-4">
+      <p className="text-[12px] text-amber/80 tabular-nums">{String(n).padStart(2, "0")}</p>
+      <h2 className="mt-2 text-[clamp(1.7rem,3.6vw,2.2rem)]">{title}</h2>
+      <p className="face-display mt-1 text-[17px] text-sandal italic">{note}</p>
     </header>
   );
 }
 
 export default function CvPage() {
   return (
-    <main
-      className="mx-auto max-w-4xl px-6 py-20 sm:px-10 sm:py-28"
-      style={{ ["--graha" as string]: "#e8a33d" }}
-    >
+    <main className="mx-auto max-w-4xl px-6 py-20 sm:px-10 sm:py-28">
       <p className="text-ash text-sm">
-        <a href="/">← back to the sky</a>
+        <a href="/">← Back to the turntable</a>
       </p>
 
-      {/* masthead */}
       <header className="mt-16 border-umber border-b pb-14">
-        <p className="deva text-graha text-xl leading-none">निष्ठा</p>
-        <h1 className="mt-5 font-display text-[clamp(2.6rem,8vw,4.2rem)] leading-[0.95] lowercase">
-          nishtha jain
-        </h1>
-        <p className="mt-6 max-w-[62ch] text-lg text-sandal leading-relaxed">{SUMMARY}</p>
+        <h1 className="text-[clamp(2.8rem,8vw,4.4rem)] leading-[0.95]">Nishtha Jain</h1>
+        <p className="face-display mt-3 text-[clamp(1.15rem,2.4vw,1.4rem)] text-sandal italic">
+          Final-year Computer Science, GNDEC Ludhiana
+        </p>
+        <p className="mt-8 max-w-[62ch] text-[17px] text-sandal leading-relaxed">{SUMMARY}</p>
 
         <div className="mt-10 flex flex-wrap gap-x-10 gap-y-3 text-sm">
-          <span className="text-ash">ludhiana, punjab</span>
+          <span className="text-ash">Ludhiana, Punjab</span>
           <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
           <a href={CONTACT.github.href}>{CONTACT.github.label}</a>
-          <a href={CONTACT.resume.href}>one-page résumé, pdf</a>
+          <a href={CONTACT.resume.href}>One-page résumé (PDF)</a>
         </div>
       </header>
 
       <section className="mt-24">
-        <Head n={1}>experience</Head>
+        <Head n={1} title="Experience" note="Where the work happened" />
         <ol className="space-y-14">
           {POSTS.map((p) => (
             <li
@@ -61,8 +55,8 @@ export default function CvPage() {
                 {p.to}
               </p>
               <div>
-                <h3 className="font-display text-xl">{p.role}</h3>
-                <p className="mt-1 text-graha">
+                <h3 className="text-[1.45rem]">{p.role}</h3>
+                <p className="face-display mt-0.5 text-[17px] text-amber/90 italic">
                   {p.org}
                   {p.where ? <span className="text-ash"> · {p.where}</span> : null}
                 </p>
@@ -80,7 +74,7 @@ export default function CvPage() {
       </section>
 
       <section className="mt-24">
-        <Head n={2}>what she works with</Head>
+        <Head n={2} title="Skills" note="What I work with" />
         <dl className="space-y-5">
           {SKILLS.map((s) => (
             <div key={s.group} className="grid gap-1 sm:grid-cols-[11rem_1fr] sm:gap-10">
@@ -92,12 +86,12 @@ export default function CvPage() {
       </section>
 
       <section className="mt-24">
-        <Head n={3}>projects</Head>
+        <Head n={3} title="Projects" note="Everything, not just the highlights" />
         <ol className="space-y-14">
           {CV_PROJECTS.map((p) => (
             <li key={p.name}>
-              <h3 className="font-display text-xl">{p.name}</h3>
-              <p className="mt-1 text-ash text-sm">{p.kind}</p>
+              <h3 className="text-[1.45rem]">{p.name}</h3>
+              <p className="face-display mt-0.5 text-[16px] text-ash italic">{p.kind}</p>
               <ul className="mt-4 space-y-2 text-sandal">
                 {p.bullets.map((b) => (
                   <li key={b} className="max-w-[68ch]">
@@ -111,19 +105,21 @@ export default function CvPage() {
       </section>
 
       <section className="mt-24">
-        <Head n={4}>study</Head>
+        <Head n={4} title="Education" note="Where I'm studying" />
         <div className="grid gap-3 sm:grid-cols-[11rem_1fr] sm:gap-10">
           <p className="text-ash text-sm tabular-nums sm:pt-1.5">{STUDY.until}</p>
           <div>
-            <h3 className="font-display text-xl">{STUDY.degree}</h3>
-            <p className="mt-1 text-graha">{STUDY.school}</p>
+            <h3 className="text-[1.45rem]">{STUDY.degree}</h3>
+            <p className="face-display mt-0.5 text-[17px] text-amber/90 italic">
+              {STUDY.school}
+            </p>
             <p className="mt-3 text-sandal text-sm">{STUDY.before}</p>
           </div>
         </div>
       </section>
 
       <section className="mt-24">
-        <Head n={5}>certifications</Head>
+        <Head n={5} title="Certifications" note="Courses finished properly" />
         <ul className="grid gap-3 text-sandal sm:grid-cols-2">
           {STUDY.certifications.map((c) => (
             <li key={c}>{c}</li>
@@ -132,7 +128,7 @@ export default function CvPage() {
       </section>
 
       <section className="mt-24">
-        <Head n={6}>and the taught</Head>
+        <Head n={6} title="Teaching & Leadership" note="The people I've learned alongside" />
         <ul className="space-y-3 text-sandal">
           {STUDY.taught.map((t) => (
             <li key={t} className="max-w-[62ch]">
@@ -143,12 +139,12 @@ export default function CvPage() {
       </section>
 
       <footer className="mt-28 border-umber border-t pt-10">
-        <p className="max-w-[58ch] text-sandal">
-          artificial intelligence and machine learning. data-driven systems and product
-          building. music. the cosmos, hindu mythology, and modern history.
+        <p className="face-display max-w-[58ch] text-[1.15rem] text-sandal italic">
+          Also: R&amp;B, pop, classical and slow EDM; singing; K-pop and K-dramas; the cosmos;
+          and photography.
         </p>
         <p className="mt-10 text-ash text-sm">
-          <a href="/">← back to the sky</a>
+          <a href="/">← Back to the turntable</a>
         </p>
       </footer>
     </main>

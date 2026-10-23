@@ -128,11 +128,42 @@ function ringText(
   });
 }
 
+/** The page's active typefaces, read from the stylesheet so the label always matches it. */
+function activeType() {
+  const cs = getComputedStyle(document.documentElement);
+  const read = (name: string, fallback: string) => cs.getPropertyValue(name).trim() || fallback;
+  return {
+    display: read("--font-display", "Georgia, serif"),
+    weight: read("--display-weight", "400"),
+    body: read("--font-body", "system-ui, sans-serif"),
+  };
+}
+
+/** Set a line no wider than `max`, shrinking the size if a face runs wide. */
+function fitText(
+  x: CanvasRenderingContext2D,
+  text: string,
+  font: (px: number) => string,
+  px: number,
+  max: number,
+  y: number,
+) {
+  let size = px;
+  x.font = font(size);
+  while (x.measureText(text).width > max && size > 12) {
+    size -= 2;
+    x.font = font(size);
+  }
+  x.fillText(text, 0, y);
+}
+
 export async function makeLabel(): Promise<THREE.Texture> {
+  const t = activeType();
   await Promise.all([
-    document.fonts.load('150px "Tiro Devanagari Sanskrit"', "निष्ठा"),
-    document.fonts.load('60px "Zodiak"'),
-    document.fonts.load('30px "Switzer"'),
+    document.fonts.load(`italic ${t.weight} 110px ${t.display}`),
+    document.fonts.load(`${t.weight} 40px ${t.display}`),
+    document.fonts.load(`700 26px ${t.body}`),
+    document.fonts.load(`400 24px ${t.body}`),
   ]).catch(() => undefined);
 
   const c = document.createElement("canvas");
@@ -176,33 +207,54 @@ export async function makeLabel(): Promise<THREE.Texture> {
   x.textAlign = "center";
   x.textBaseline = "middle";
 
-  // ring of small type
+  // ring of small type — uppercase stamps, as on a real label
   x.fillStyle = red;
-  x.font = '600 25px "Switzer", sans-serif';
+  x.font = `700 22px ${t.body}`;
   ringText(
     x,
     "  NOW PLAYING  ·  SIDE A — WHAT I BUILD  ·  SIDE B — WHAT I LOVE  ·  ",
     mid * 0.825,
   );
 
-  // name
+  // the name, in the display italic
   x.fillStyle = red;
-  x.font = '150px "Tiro Devanagari Sanskrit", serif';
-  x.fillText("निष्ठा", 0, -170);
-  x.fillStyle = ink;
-  x.font = '60px "Zodiak", serif';
-  x.fillText("nishtha jain", 0, -62);
+  // Max width keeps the line's corners inside the ring of small type at r ≈ 0.8.
+  fitText(
+    x,
+    "Nishtha Jain",
+    (px) => `italic ${t.weight} ${px}px ${t.display}`,
+    112,
+    mid * 1.32,
+    -168,
+  );
 
-  // side + speed, either side of the spindle
-  x.font = '600 28px "Switzer", sans-serif';
-  x.fillText("SIDE A", -150, 4);
-  x.fillText("33⅓", 150, 4);
-
-  x.font = '500 24px "Switzer", sans-serif';
   x.fillStyle = ink;
-  x.fillText("LUDHIANA  ·  2026", 0, 104);
+  fitText(
+    x,
+    "Built in Ludhiana",
+    (px) => `${t.weight} ${px}px ${t.display}`,
+    40,
+    mid * 1.2,
+    -84,
+  );
+
+  // side and speed, either side of the spindle (no face here has a ⅓ glyph)
+  x.font = `700 26px ${t.body}`;
+  x.fillText("SIDE A", -148, 4);
+  x.fillText("33 RPM", 148, 4);
+
+  x.font = `400 22px ${t.body}`;
+  x.fillText("STEREO  ·  2026", 0, 100);
+
   x.fillStyle = red;
-  x.fillText("℗ built by hand", 0, 150);
+  fitText(
+    x,
+    "Made by hand",
+    (px) => `italic ${t.weight} ${px}px ${t.display}`,
+    34,
+    mid * 0.9,
+    150,
+  );
 
   // spindle hole
   x.fillStyle = "#0d0b0a";
@@ -210,10 +262,10 @@ export async function makeLabel(): Promise<THREE.Texture> {
   x.arc(0, 0, 20, 0, Math.PI * 2);
   x.fill();
 
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 8;
-  return t;
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
 }
 
 /**

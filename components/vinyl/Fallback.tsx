@@ -16,11 +16,11 @@ export function Fallback() {
       <div className="fallback-record">
         <div className={`fallback-disc ${spinning ? "is-spinning" : ""}`}>
           <div className="fallback-label">
-            <span className="deva text-[clamp(1.1rem,4.4vw,1.6rem)] text-label leading-none">
-              निष्ठा
+            <span className="face-display text-[clamp(1rem,3.8vw,1.45rem)] text-label italic leading-none">
+              Nishtha Jain
             </span>
-            <span className="mt-1 font-display text-[clamp(0.6rem,2.1vw,0.8rem)] text-[#2a1c16]">
-              nishtha jain
+            <span className="face-display mt-1 text-[clamp(0.55rem,1.8vw,0.75rem)] text-[#2a1c16]">
+              Built in Ludhiana
             </span>
           </div>
         </div>
