@@ -2,7 +2,7 @@
 
 import { useLenis } from "lenis/react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CONTACT } from "@/data/contact";
 import { HIDDEN_TRACK } from "@/data/tracks";
 import { flipRecord, useDeck } from "@/lib/vinyl/deck";
@@ -189,39 +189,95 @@ function FlipButton() {
   );
 }
 
+/** Copies the address, for anyone who would rather not open a mail app. */
+function CopyEmail() {
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const id = window.setTimeout(() => setCopied(false), 2000);
+    return () => window.clearTimeout(id);
+  }, [copied]);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(CONTACT.email);
+          setCopied(true);
+        } catch {
+          window.location.href = `mailto:${CONTACT.email}`;
+        }
+      }}
+      className="rounded-full border border-ivory/20 px-4 py-2 text-[13px] text-sandal transition-colors duration-200 hover:border-ivory/40 hover:text-ivory"
+    >
+      <span aria-live="polite">{copied ? "Copied" : "Copy address"}</span>
+    </button>
+  );
+}
+
+const ELSEWHERE = [
+  { label: "GitHub", sub: CONTACT.github.label, href: CONTACT.github.href },
+  ...(CONTACT.linkedin.href
+    ? [{ label: "LinkedIn", sub: "Profile", href: CONTACT.linkedin.href }]
+    : []),
+  { label: "Résumé", sub: "One page, PDF", href: CONTACT.resume.href },
+  { label: "Curriculum vitae", sub: "The long version", href: "/cv" },
+];
+
 export function Outro() {
   return (
-    <footer className="relative border-ivory/[0.08] border-t px-5 pt-32 pb-16 sm:px-8 lg:px-14">
+    <footer
+      id="contact"
+      className="relative border-ivory/[0.08] border-t px-5 pt-32 pb-16 sm:px-8 lg:px-14"
+    >
       <div className="mx-auto max-w-[1280px]">
-        <p className="face-display text-[clamp(2.8rem,9vw,7.5rem)] italic leading-[0.95]">
-          Thanks for listening.
-        </p>
-        <FlipButton />
-        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <p className="text-[12px] text-ash uppercase tracking-[0.16em]">Write to me</p>
-            <a href={`mailto:${CONTACT.email}`} className="mt-2 inline-block text-[16px]">
-              {CONTACT.email}
-            </a>
-          </div>
-          <div>
-            <p className="text-[12px] text-ash uppercase tracking-[0.16em]">Code</p>
-            <a href={CONTACT.github.href} className="mt-2 inline-block text-[16px]">
-              {CONTACT.github.label}
-            </a>
-          </div>
-          <div>
-            <p className="text-[12px] text-ash uppercase tracking-[0.16em]">The long version</p>
-            <a href="/cv" className="mt-2 inline-block text-[16px]">
-              Curriculum vitae
-            </a>
-          </div>
-          <div>
-            <p className="text-[12px] text-ash uppercase tracking-[0.16em]">One page</p>
-            <a href={CONTACT.resume.href} className="mt-2 inline-block text-[16px]">
-              Résumé (PDF)
-            </a>
-          </div>
+        <p className="led text-[13px] font-[700]">CONTACT</p>
+        <h2
+          id="contact-title"
+          className="mt-5 text-[clamp(2.4rem,5.6vw,4.4rem)] leading-[0.98]"
+        >
+          Get in touch
+        </h2>
+
+        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <a
+            href={`mailto:${CONTACT.email}`}
+            className="face-display break-all text-[clamp(1.5rem,4.6vw,3.4rem)] italic leading-tight"
+          >
+            {CONTACT.email}
+          </a>
+          <CopyEmail />
+        </div>
+
+        <ul className="mt-12 flex flex-col gap-px overflow-hidden rounded-[6px] border border-ivory/10 bg-ivory/10 md:flex-row">
+          {ELSEWHERE.map((l) => (
+            <li key={l.label} className="flex-1 bg-void">
+              <a
+                href={l.href}
+                {...(l.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+                className="group flex items-center justify-between gap-4 px-6 py-5 no-underline transition-colors duration-200 hover:bg-ivory/[0.04]"
+              >
+                <span>
+                  <span className="block text-[16px] text-ivory">{l.label}</span>
+                  <span className="block text-[13px] text-ash">{l.sub}</span>
+                </span>
+                <span
+                  aria-hidden
+                  className="text-ash transition-transform duration-300 group-hover:translate-x-1 group-hover:text-amber"
+                >
+                  {l.href.startsWith("http") ? "↗" : "→"}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 text-[13px] text-ash">Ludhiana, Punjab, India</p>
+
+        <div className="mt-28 border-ivory/[0.08] border-t pt-20">
+          <p className="face-display text-[clamp(2.8rem,9vw,7.5rem)] italic leading-[0.95]">
+            Thanks for listening.
+          </p>
+          <FlipButton />
         </div>
         <p className="mt-24 text-[13px] text-ash">
           Built by hand in Ludhiana, 2026. Every sound on this page is synthesised as you

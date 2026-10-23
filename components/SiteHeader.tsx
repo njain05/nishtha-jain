@@ -64,8 +64,14 @@ export function SiteHeader() {
           </span>
         </div>
         <a
-          href="/cv"
+          href="#contact"
           className="hidden rounded-full px-3 py-1.5 text-[13px] text-sandal no-underline transition-colors hover:text-ivory sm:inline"
+        >
+          Contact
+        </a>
+        <a
+          href="/cv"
+          className="hidden rounded-full px-2 sm:pl-0 py-1.5 text-[13px] text-sandal no-underline transition-colors hover:text-ivory sm:inline"
         >
           CV
         </a>

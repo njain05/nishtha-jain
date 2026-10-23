@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { About } from "@/components/album/About";
 import { HiddenTrack, LifeGoals, NextRelease } from "@/components/album/AfterTracks";
+import { Credits } from "@/components/album/Credits";
+import { Discography } from "@/components/album/Discography";
 import { Tracklist } from "@/components/album/Tracklist";
 import { LOVES } from "@/data/loves";
 import { TRACKS } from "@/data/tracks";
@@ -23,8 +26,11 @@ export function Sides() {
     );
   return (
     <>
+      <About />
       <Tracklist key="A" tracks={TRACKS} side="A" />
+      <Credits />
       <HiddenTrack />
+      <Discography />
       <NextRelease />
     </>
   );
