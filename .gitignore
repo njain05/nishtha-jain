@@ -13,3 +13,6 @@ playwright-report/
 # Personal documents stay on this machine: CVs carry a phone number.
 source-documents/
 *.docx
+
+# Local type specimens, not part of the site
+app/lab/

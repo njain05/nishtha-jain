@@ -59,6 +59,9 @@ html[data-side="b"] {
   --color-ash: #8a3a6a;
   --color-amber: #ff3d9a;
   color-scheme: light;
+  /* Side B speaks in its own voice: Fraunces, soft and romantic. */
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --display-weight: 600;
 }
 
 @layer base {

@@ -179,7 +179,12 @@ const LABELS = {
 
 export async function makeLabel(side: "A" | "B" = "A"): Promise<THREE.Texture> {
   const L = LABELS[side];
-  const t = activeType();
+  // Both labels are drawn when the deck loads, before anyone has turned the
+  // record over, so Side B names its own face rather than reading the page's.
+  const t =
+    side === "B"
+      ? { ...activeType(), display: `"Fraunces", Georgia, serif`, weight: "600" }
+      : activeType();
   await Promise.all([
     document.fonts.load(`italic ${t.weight} 110px ${t.display}`),
     document.fonts.load(`${t.weight} 40px ${t.display}`),
