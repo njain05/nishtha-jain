@@ -65,7 +65,7 @@ export function About() {
 
         <p
           ref={ref}
-          className="face-display mt-8 text-[clamp(1.75rem,4.4vw,3.5rem)] leading-[1.18] lg:mt-10"
+          className="face-display mt-8 max-w-[54rem] text-[clamp(1.35rem,2.9vw,2.35rem)] leading-[1.25] lg:mt-10"
         >
           {reduced
             ? WORDS.map((w) => (
@@ -81,7 +81,7 @@ export function About() {
         <dl className="mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-ivory/10 border-t pt-10 lg:grid-cols-4">
           {FACTS.map((f) => (
             <div key={f.big}>
-              <dt className="face-display text-[clamp(1.6rem,3vw,2.3rem)] leading-none">
+              <dt className="face-display text-[clamp(1.4rem,2.4vw,1.9rem)] leading-none">
                 {f.big}
               </dt>
               <dd className="mt-3 max-w-[16rem] text-[14px] text-ash leading-snug">
