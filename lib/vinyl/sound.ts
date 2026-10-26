@@ -453,6 +453,9 @@ export function setSideSound(next: Side) {
   CHORDS = next === "B" ? SIDE_B : SIDE_A;
   chordMs = next === "B" ? 3200 : 6400;
   transpose = 0;
+  // Start fetching the new side's recording as the record turns over, so it
+  // is ready by the time the needle lands rather than starting late.
+  if (ctx) songForSide();
 }
 
 export function setMuted(m: boolean) {

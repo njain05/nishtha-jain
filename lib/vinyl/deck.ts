@@ -82,7 +82,11 @@ function cue() {
       drop();
       startCrackle();
       setDeck({ state: "playing", since: performance.now() });
-      window.setTimeout(startMusic, 450);
+      // Only if the needle is still down: a stop or a flip inside this half
+      // second must not leave music starting after it.
+      window.setTimeout(() => {
+        if (deck.state === "playing") startMusic();
+      }, 450);
     }, 2.15);
 }
 
