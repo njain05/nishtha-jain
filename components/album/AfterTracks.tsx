@@ -171,6 +171,23 @@ function FlipButton() {
   );
 }
 
+/** Who made the music, side by side; whatever has no recording is synthesised. */
+function soundCredits() {
+  const { A, B } = SONG_TITLES;
+  const played = [
+    A
+      ? `Side A plays “${A.title}”${A.sungBy ? `, the song ${A.sungBy} sang, played by ${A.artist}` : ` by ${A.artist}`}`
+      : null,
+    B ? `Side B plays “${B.title}” by ${B.artist}` : null,
+  ].filter(Boolean);
+  if (played.length === 0) return "Every sound on this page is synthesised as you listen.";
+  const rest =
+    A && B
+      ? "The crackle and the needle"
+      : "The crackle, the needle and the other side's chords";
+  return `${played.join("; ")}. ${rest} are synthesised as you listen.`;
+}
+
 /** Copies the address, for anyone who would rather not open a mail app. */
 function CopyEmail() {
   const [copied, setCopied] = useState(false);
@@ -264,10 +281,7 @@ export function Outro() {
           <FlipButton />
         </div>
         <p className="mt-24 text-[13px] text-ash">
-          Built by hand in Ludhiana, 2026.{" "}
-          {SONG_TITLES.A
-            ? `Side A plays “${SONG_TITLES.A.title}”, the song ${SONG_TITLES.A.sungBy} sang, played by ${SONG_TITLES.A.artist}. The crackle, the needle and Side B's chords are synthesised as you listen.`
-            : "Every sound on this page is synthesised as you listen."}
+          Built by hand in Ludhiana, 2026. {soundCredits()}
         </p>
       </div>
     </footer>

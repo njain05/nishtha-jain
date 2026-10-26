@@ -26,7 +26,9 @@ const SONGS: Record<Side, string | undefined> = {
   A:
     process.env.NEXT_PUBLIC_SONG_A ??
     (process.env.NODE_ENV === "development" ? "/audio/side-a.mp3" : undefined),
-  B: process.env.NEXT_PUBLIC_SONG_B,
+  B:
+    process.env.NEXT_PUBLIC_SONG_B ??
+    (process.env.NODE_ENV === "development" ? "/audio/side-b.mp3" : undefined),
 };
 
 /** What the readout says is playing, when a side has a recording. */
@@ -38,7 +40,8 @@ export const SONG_TITLES: Record<
   A: SONGS.A
     ? { title: "The World We Knew", artist: "the Caravelli Orchestra", sungBy: "Frank Sinatra" }
     : undefined,
-  B: undefined,
+  // A Super Trouper is the spotlight that follows a singer on stage.
+  B: SONGS.B ? { title: "Super Trouper", artist: "ABBA" } : undefined,
 };
 
 const SONG_LEVEL = 0.8;
