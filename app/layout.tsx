@@ -8,7 +8,7 @@ const description =
   "Nishtha Jain — computer science engineer in Ludhiana. Production web platforms, LLM and RAG pipelines, and the security work underneath them.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://nishtha.dev"),
+  metadataBase: new URL("https://nishtha-jain.vercel.app"),
   title: { default: title, template: "%s · Nishtha Jain" },
   description,
   authors: [{ name: "Nishtha Jain" }],
