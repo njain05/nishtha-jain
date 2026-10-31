@@ -17,7 +17,7 @@ export default function Page() {
       <main className="bg-void">
         <h1 className="sr-only">
           Nishtha Jain — Software &amp; Applied AI Engineer, final-year computer science at
-          GNDEC Ludhiana, incoming AI Native Software Engineer Intern at EPAM India.
+          GNDEC Ludhiana, selected for EPAM India's AI Native Software Engineer Intern role.
         </h1>
         <section
           id="top"

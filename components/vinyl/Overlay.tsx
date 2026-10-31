@@ -13,7 +13,7 @@ const LINES: Record<Side, { title: string; lines: [string, string] }> = {
   A: {
     title: "Software & Applied AI Engineer",
     lines: [
-      "Incoming AI Native Software Engineer Intern, EPAM India",
+      "Selected for EPAM India's AI Native Software Engineer Intern role",
       "Final-year Computer Science, GNDEC Ludhiana",
     ],
   },

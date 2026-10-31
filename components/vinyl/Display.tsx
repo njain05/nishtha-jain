@@ -14,7 +14,7 @@ const SCENE_GRACE_MS = 9000;
 
 // No colons: at this size Doto's colon reads as a dagger.
 const NOW_PLAYING: Record<Side, string> = {
-  A: "NOW PLAYING  ·  NISHTHA JAIN  ·  SOFTWARE & APPLIED AI ENGINEER  ·  INCOMING AT EPAM  ·  SIDE A  WHAT I BUILD  ·  ",
+  A: "NOW PLAYING  ·  NISHTHA JAIN  ·  SOFTWARE & APPLIED AI ENGINEER  ·  SELECTED FOR EPAM INDIA  ·  SIDE A  WHAT I BUILD  ·  ",
   B: "NOW PLAYING  ·  NISHTHA JAIN  ·  SIDE B  WHAT I LOVE  ·  K-POP  ·  K-DRAMAS  ·  THE COSMOS  ·  SINGING  ·  PHOTOGRAPHY  ·  ",
 };
 

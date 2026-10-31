@@ -88,7 +88,7 @@ export function NextRelease() {
             <div className="mt-auto">
               <p className="face-display text-[11cqw] leading-[0.92]">Next release</p>
               <p className="face-display mt-[3%] text-[4.4cqw] italic opacity-70">
-                Recorded at EPAM India
+                EPAM India · offer letter pending
               </p>
             </div>
           </div>
@@ -119,7 +119,8 @@ export function NextRelease() {
             EPAM India
           </p>
           <p className="mt-6 max-w-[32rem] text-[16px] text-sandal leading-relaxed">
-            Placement offer, 2026. Release date to be announced.
+            Selected for the role. The offer letter is pending, so the release date is still to
+            be announced.
           </p>
         </div>
       </div>

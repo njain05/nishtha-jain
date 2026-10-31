@@ -13,8 +13,8 @@ export const POSTS: Post[] = [
   {
     role: "AI Native Software Engineer Intern",
     org: "EPAM India",
-    from: "Incoming",
-    lines: ["Placement offer, 2026."],
+    from: "Selected",
+    lines: ["Selected for the role; offer letter pending."],
   },
   {
     role: "Generative AI / ML Intern",

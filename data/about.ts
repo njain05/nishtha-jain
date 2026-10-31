@@ -9,7 +9,7 @@
  * the display italic.
  */
 export const ABOUT =
-  "I'm Nishtha, a final-year computer science student at GNDEC in Ludhiana. I build software for *real people* — a home-services platform running across the UAE, AI pipelines that answer from real data, and websites for local businesses. I fell for computers at 13, and learned to code on my first laptop during lockdown. Scratch and SQL then; payments, live tracking and the security underneath them now. *Next stop, EPAM India.*";
+  "I'm Nishtha, a final-year computer science student at GNDEC in Ludhiana. I build software for *real people* — a home-services platform running across the UAE, AI pipelines that answer from real data, and websites for local businesses. I fell for computers at 13, and learned to code on my first laptop during lockdown. Scratch and SQL then; payments, live tracking and the security underneath them now. *Next: EPAM India, offer letter pending.*";
 
 export const FACTS: { big: string; small: string }[] = [
   { big: "900+", small: "students taught AI–ML fundamentals at college induction" },
@@ -207,9 +207,12 @@ export const RELEASES: {
   },
   {
     year: "Next",
-    stage: "Incoming",
+    stage: "Selected",
     title: "EPAM India",
     upcoming: true,
-    lines: ["AI Native Software Engineer Intern.", "Placement offer, 2026."],
+    lines: [
+      "Selected for the AI Native Software Engineer Intern role.",
+      "Offer letter pending.",
+    ],
   },
 ];
