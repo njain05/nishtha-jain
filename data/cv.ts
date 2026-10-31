@@ -76,6 +76,25 @@ export const CV_PROJECTS: CvProject[] = [
     ],
   },
   {
+    name: "College Timetable",
+    kind: "Constraint-solving web app — Punjab Jobs AI Bootcamp hackathon (J-PAL South Asia)",
+    bullets: [
+      "Clash-free timetables for any college with Google OR-Tools CP-SAT, re-checked by an independent verifier that shares no code with the solver.",
+      "Role-based sign-in for Dean, HOD, timetable in-charge, teacher and student; department data approval, leave with ranked substitutes, room booking with digital approval.",
+      "Plain-English explanations when a timetable is impossible; a Claude chat with six tools that answers only from the real timetable.",
+      "Next.js frontend on Vercel, FastAPI backend on Render, PostgreSQL on Supabase. Live: college-timetable-teal.vercel.app",
+    ],
+  },
+  {
+    name: "Offer Copilot",
+    kind: "AI offer engine for an e-commerce store — hackathon",
+    bullets: [
+      "Decides which customer gets which offer and why; every offer is validated against editable store rules (category caps, margin, stock, cooldown) and lowered or blocked with plain-English reasons.",
+      "Seller and customer Telegram bots sharing one state, plus a dashboard with a natural-language Ask Copilot chat.",
+      "Claude proposes campaigns as structured output that is never trusted directly — every proposal is re-checked before it can reach a customer. 67 tests.",
+    ],
+  },
+  {
     name: "Academic Status Transparency Notification System (ASTNS)",
     kind: "Full-stack MERN application — minor project, team of 3",
     bullets: [
